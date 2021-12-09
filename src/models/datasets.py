@@ -19,7 +19,7 @@ from transformers import BertTokenizerFast as BertTokenizer
 from typing import Optional
 
 
-class ToxicCommentsDataset(Dataset):
+class NegativeSamplingDataset(Dataset):
     """
     ToxicCommentsDataset is created to create a custom dataset.
     later we wrap a lightning data module around it.
@@ -87,7 +87,7 @@ class ToxicCommentsDataset(Dataset):
             labels=torch.Tensor(label))
 
 
-class ToxicCommentsDataModule(pl.LightningDataModule):
+class NegativeSamplingDataModule(pl.LightningDataModule):
     def __init__(self, config, train_df: pd.DataFrame, test_df: pd.DataFrame, tokenizer, batch_size: int):
         super().__init__()
         self.train_df = train_df
@@ -99,8 +99,8 @@ class ToxicCommentsDataModule(pl.LightningDataModule):
         self.train_dataset, self.test_dataset = None, None
 
     def setup(self, stage: Optional[str] = None) -> None:
-        self.train_dataset = ToxicCommentsDataset(self.train_df, self.tokenizer, self.max_token_len)
-        self.test_dataset = ToxicCommentsDataset(self.test_df, self.tokenizer, self.max_token_len)
+        self.train_dataset = NegativeSamplingDataset(self.train_df, self.tokenizer, self.max_token_len)
+        self.test_dataset = NegativeSamplingDataset(self.test_df, self.tokenizer, self.max_token_len)
 
     def train_dataloader(self):
         return DataLoader(

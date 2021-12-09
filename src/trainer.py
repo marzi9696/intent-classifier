@@ -8,7 +8,7 @@ from utils import calculate_warmup_steps
 from configuration.config import BaseConfig
 
 from data_loader.data_reader import read_csv
-from models import ToxicCommentsDataModule, SBERTModel, build_checkpoint_callback
+from models import NegativeSamplingDataModule, SBERTModel, build_checkpoint_callback
 
 from sklearn.model_selection import train_test_split
 
@@ -28,7 +28,7 @@ if __name__ == "__main__":
     train, val = train_test_split(data, test_size=0.05)
    
 
-    data_module = ToxicCommentsDataModule(CONFIG, train, val, tokenizer,
+    data_module = NegativeSamplingDataModule(CONFIG, train, val, tokenizer,
                                           batch_size=CONFIG.batch_size,
                                           )
 

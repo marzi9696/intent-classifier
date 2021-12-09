@@ -30,8 +30,8 @@ class SBERTModel(pl.LightningModule):
         super().__init__()
         self.config = config
         self.bert = BertModel.from_pretrained(config.language_model_path, return_dict=True)
-        self.fc = nn.Linear(self.bert.config.hidden_size, 768)
-        self.classifier = nn.Linear(768, n_classes)
+        self.fc = nn.Linear(self.bert.config.hidden_size, self.bert.config.hidden_size)
+        self.classifier = nn.Linear(self.bert.config.hidden_size, n_classes)
         self.n_training_steps = n_training_steps
         self.n_warmup_steps = n_warmup_steps
         self.criterion = nn.BCELoss()
@@ -55,7 +55,7 @@ class SBERTModel(pl.LightningModule):
         output2 = self.fc(output2.pooler_output)
         subtract = torch.sub(output1, output2)
         subtracted_dense = self.classifier(subtract)
-        output = torch.sigmoid(concat_dense)
+        output = torch.sigmoid(subtracted_dense)
         loss = 0
         if labels is not None:
             loss = self.criterion(output, labels)
